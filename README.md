@@ -1,4 +1,4 @@
-###Vaakya: Privacy first AR Captioning Glasses
+### Vaakya: Privacy first AR Captioning Glasses
 **Python, Vosk STT, Raspberry Pi, Pygame**
 
 ---
