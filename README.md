@@ -7,7 +7,7 @@ Vaakya (Sanskrit: Speech) is a real time AR captioning system built for the 28.8
 
 ---
 
-##Architecture
+### Architecture
 The main challenge with this was getting end to end latency. Our system was made in a way where the microphone captures the audio to display render under 300ms on a Raspberry Pi, which is below the perceptual threshold for caption lag during natural speech of humans. All the current existing STT pipelines are calling a cloud API (600ms+ round trip latency) or run too slowly on edge hardware to be usable in real conversations.
 
 To solve this, I built the following:
