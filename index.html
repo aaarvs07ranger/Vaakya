@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaakya — Hear the Room. Feel Every Word.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F7F2EA;
+    --cream-dark: #EDE6D8;
+    --terra: #C4622D;
+    --terra-light: #D4845A;
+    --terra-pale: #F0DDD2;
+    --umber: #3D2B1F;
+    --umber-mid: #6B4C3B;
+    --umber-light: #9E7B6A;
+    --sage: #7A8C7E;
+    --sage-light: #B5C4B8;
+    --warm-white: #FDFAF5;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Jost', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--umber);
+    font-family: var(--font-body);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+
+  nav.scrolled {
+    background: rgba(247, 242, 234, 0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(196, 98, 45, 0.12);
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--umber);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .nav-logo span {
+    color: var(--terra);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--umber-mid);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--terra); }
+
+  .nav-cta {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--terra);
+    color: var(--warm-white);
+    padding: 10px 24px;
+    border-radius: 40px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .nav-cta:hover { background: var(--umber); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 64px 80px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--terra);
+  }
+
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(52px, 6vw, 88px);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--umber);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s forwards;
+  }
+
+  .hero-h1 em {
+    font-style: italic;
+    color: var(--terra);
+  }
+
+  .hero-sub {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.2vw, 46px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--umber-mid);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--umber-mid);
+    max-width: 420px;
+    line-height: 1.75;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.65s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--terra);
+    color: var(--warm-white);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 16px 36px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.25s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background: var(--umber);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(61, 43, 31, 0.2);
+  }
+
+  .btn-primary svg {
+    width: 14px; height: 14px;
+    transition: transform 0.2s;
+  }
+
+  .btn-primary:hover svg { transform: translateX(3px); }
+
+  .btn-ghost {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--umber-mid);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--umber-light);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-ghost:hover { color: var(--terra); border-color: var(--terra); }
+
+  /* Hero right — visual panel */
+  .hero-right {
+    background: var(--terra-pale);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 40%, rgba(196,98,45,0.15) 0%, transparent 65%);
+  }
+
+  /* AR glasses illustration */
+  .glasses-wrap {
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.9s forwards;
+  }
+
+  .glasses-svg-container {
+    width: 380px;
+    max-width: 90%;
+  }
+
+  /* Floating caption card */
+  .caption-card {
+    position: absolute;
+    bottom: 18%;
+    left: -40px;
+    background: var(--warm-white);
+    border: 1px solid rgba(196, 98, 45, 0.2);
+    border-radius: 16px;
+    padding: 18px 22px;
+    width: 260px;
+    box-shadow: 0 20px 48px rgba(61, 43, 31, 0.12);
+    opacity: 0;
+    animation: slideInLeft 0.8s 1.4s forwards;
+  }
+
+  .caption-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 8px;
+  }
+
+  .caption-text {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--umber);
+    line-height: 1.35;
+    margin-bottom: 10px;
+  }
+
+  .sentiment-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sentiment-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #7DB88A;
+    flex-shrink: 0;
+  }
+
+  .sentiment-label {
+    font-size: 11px;
+    color: var(--umber-light);
+    letter-spacing: 0.04em;
+  }
+
+  .sentiment-bar-wrap {
+    flex: 1;
+    height: 3px;
+    background: rgba(61,43,31,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .sentiment-bar {
+    height: 100%;
+    width: 78%;
+    background: #7DB88A;
+    border-radius: 2px;
+    animation: growBar 1.5s 2s both;
+  }
+
+  @keyframes growBar { from { width: 0; } to { width: 78%; } }
+
+  /* Latency badge */
+  .latency-badge {
+    position: absolute;
+    top: 25%;
+    right: -20px;
+    background: var(--umber);
+    color: var(--warm-white);
+    padding: 12px 18px;
+    border-radius: 12px;
+    text-align: center;
+    opacity: 0;
+    animation: slideInRight 0.8s 1.6s forwards;
+  }
+
+  .latency-num {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 500;
+    display: block;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  .latency-unit {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terra-light);
+  }
+
+  /* ── PROBLEM ── */
+  #problem {
+    background: var(--umber);
+    color: var(--cream);
+    padding: 120px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #problem::before {
+    content: '';
+    position: absolute;
+    top: -120px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,98,45,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .problem-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px;
+    text-align: center;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terra-light);
+    margin-bottom: 48px;
+  }
+
+  .problem-pullquote {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4vw, 58px);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.25;
+    color: var(--cream);
+    margin-bottom: 28px;
+  }
+
+  .problem-pullquote em {
+    color: var(--terra-light);
+    font-style: normal;
+  }
+
+  .problem-body {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.85;
+    color: rgba(237, 230, 216, 0.72);
+    max-width: 640px;
+    margin: 0 auto 64px;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    border: 1px solid rgba(237, 230, 216, 0.12);
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(237, 230, 216, 0.05);
+  }
+
+  .stat-cell {
+    padding: 40px 32px;
+    text-align: center;
+    border-right: 1px solid rgba(237, 230, 216, 0.1);
+    transition: background 0.3s;
+  }
+
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell:hover { background: rgba(196, 98, 45, 0.1); }
+
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--terra-light);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-desc {
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: rgba(237, 230, 216, 0.55);
+  }
+
+  /* ── FEATURES ── */
+  #features {
+    padding: 120px 0;
+    background: var(--cream);
+  }
+
+  .features-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .features-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: end;
+    margin-bottom: 80px;
+  }
+
+  .features-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 20px;
+  }
+
+  .features-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 4vw, 60px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--umber);
+  }
+
+  .features-title em { font-style: italic; color: var(--terra); }
+
+  .features-desc {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--umber-mid);
+    line-height: 1.8;
+    align-self: end;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .feature-card {
+    background: var(--warm-white);
+    border: 1px solid rgba(196, 98, 45, 0.12);
+    border-radius: 24px;
+    padding: 44px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    cursor: default;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--terra);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 56px rgba(61, 43, 31, 0.1);
+    border-color: rgba(196, 98, 45, 0.25);
+  }
+
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--terra-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .feature-icon svg {
+    width: 24px; height: 24px;
+    color: var(--terra);
+  }
+
+  .feature-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--umber);
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  .feature-desc {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--umber-mid);
+    line-height: 1.75;
+    margin-bottom: 24px;
+  }
+
+  .feature-metric {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    background: var(--terra-pale);
+    border-radius: 8px;
+    padding: 6px 14px;
+  }
+
+  .feature-metric-num {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--terra);
+  }
+
+  .feature-metric-label {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--umber-mid);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── TRACTION ── */
+  #traction {
+    background: var(--terra-pale);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #traction::after {
+    content: 'VAAKYA';
+    position: absolute;
+    font-family: var(--font-display);
+    font-size: 240px;
+    font-weight: 600;
+    color: rgba(196, 98, 45, 0.06);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: 0.15em;
+  }
+
+  .traction-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .traction-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .traction-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 300;
+    color: var(--umber);
+    margin-top: 16px;
+  }
+
+  .traction-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .traction-card {
+    background: var(--warm-white);
+    border: 1px solid rgba(196, 98, 45, 0.15);
+    border-radius: 20px;
+    padding: 36px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .traction-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(61, 43, 31, 0.08);
+  }
+
+  .traction-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--terra-pale);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .traction-icon svg { width: 20px; height: 20px; color: var(--terra); }
+
+  .traction-card-body {}
+
+  .traction-card-value {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--umber);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .traction-card-label {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--umber-mid);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── WAITLIST / CTA ── */
+  #waitlist {
+    background: var(--umber);
+    color: var(--cream);
+    padding: 120px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #waitlist::before {
+    content: '';
+    position: absolute;
+    bottom: -200px; right: -200px;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,98,45,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .waitlist-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 48px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .waitlist-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terra-light);
+    margin-bottom: 24px;
+  }
+
+  .waitlist-title {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 24px;
+  }
+
+  .waitlist-title em { font-style: italic; color: var(--terra-light); }
+
+  .waitlist-desc {
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(237, 230, 216, 0.65);
+    line-height: 1.8;
+    margin-bottom: 52px;
+  }
+
+  .waitlist-form {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+    margin: 0 auto 24px;
+    border-radius: 50px;
+    overflow: hidden;
+    border: 1px solid rgba(237, 230, 216, 0.18);
+    background: rgba(237, 230, 216, 0.07);
+    padding: 6px 6px 6px 24px;
+    backdrop-filter: blur(4px);
+  }
+
+  .waitlist-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--cream);
+    min-width: 0;
+  }
+
+  .waitlist-input::placeholder { color: rgba(237, 230, 216, 0.35); }
+
+  .waitlist-submit {
+    background: var(--terra);
+    color: var(--warm-white);
+    border: none;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    white-space: nowrap;
+  }
+
+  .waitlist-submit:hover { background: var(--terra-light); transform: scale(1.02); }
+
+  .waitlist-note {
+    font-size: 12px;
+    color: rgba(237, 230, 216, 0.35);
+    letter-spacing: 0.03em;
+  }
+
+  .success-msg {
+    display: none;
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-style: italic;
+    color: var(--terra-light);
+    padding: 24px 0;
+  }
+
+  /* ── INVESTOR STRIP ── */
+  .investor-strip {
+    background: var(--cream-dark);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 64px;
+    border-top: 1px solid rgba(196, 98, 45, 0.12);
+    border-bottom: 1px solid rgba(196, 98, 45, 0.12);
+  }
+
+  .investor-strip-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--umber-light);
+    white-space: nowrap;
+  }
+
+  .investor-items {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .investor-item {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--umber-mid);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--umber);
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--cream);
+    letter-spacing: 0.04em;
+  }
+
+  .footer-logo span { color: var(--terra-light); }
+
+  .footer-tagline {
+    font-size: 12px;
+    color: rgba(237, 230, 216, 0.35);
+    margin-top: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(237, 230, 216, 0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--terra-light); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.75s ease, transform 0.75s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.55s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+
+    #hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    .hero-left { padding: 120px 32px 60px; }
+
+    .hero-right {
+      height: 380px;
+    }
+
+    .caption-card { left: 12px; bottom: 12%; width: 220px; }
+    .latency-badge { right: 12px; top: 20%; }
+
+    .features-header { grid-template-columns: 1fr; gap: 24px; }
+    .features-grid { grid-template-columns: 1fr; gap: 16px; }
+
+    .stats-row { grid-template-columns: 1fr; }
+    .stat-cell { border-right: none; border-bottom: 1px solid rgba(237, 230, 216, 0.1); }
+    .stat-cell:last-child { border-bottom: none; }
+
+    .traction-grid { grid-template-columns: 1fr; }
+
+    footer {
+      flex-direction: column;
+      gap: 24px;
+      text-align: center;
+    }
+
+    .investor-strip { flex-direction: column; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Vaak<span>ya</span></a>
+  <ul class="nav-links">
+    <li><a href="#problem">The Need</a></li>
+    <li><a href="#features">Technology</a></li>
+    <li><a href="#traction">Traction</a></li>
+    <li><a href="#waitlist" class="nav-cta">Join Waitlist</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Accessible Reality — Now</div>
+    <h1 class="hero-h1">Hear the room.<br><em>Feel every word.</em></h1>
+    <p class="hero-sub">AR glasses for the deaf &amp; hard of hearing.</p>
+    <p class="hero-desc">Vaakya delivers real-time captions and emotional context directly in your field of vision — so you never miss the meaning behind the words.</p>
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-primary">
+        Join the waitlist
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#features" class="btn-ghost">See how it works</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="glasses-wrap">
+      <!-- AR Glasses SVG Illustration -->
+      <div class="glasses-svg-container">
+        <svg viewBox="0 0 380 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Frame bridge -->
+          <path d="M160 130 Q190 118 220 130" stroke="#3D2B1F" stroke-width="4" stroke-linecap="round"/>
+          <!-- Left lens frame outer -->
+          <rect x="30" y="90" width="118" height="88" rx="22" fill="rgba(240,221,210,0.5)" stroke="#C4622D" stroke-width="3"/>
+          <!-- Left lens inner glass effect -->
+          <rect x="36" y="96" width="106" height="76" rx="17" fill="rgba(196,98,45,0.08)"/>
+          <!-- Right lens frame outer -->
+          <rect x="232" y="90" width="118" height="88" rx="22" fill="rgba(240,221,210,0.5)" stroke="#C4622D" stroke-width="3"/>
+          <!-- Right lens inner glass effect -->
+          <rect x="238" y="96" width="106" height="76" rx="17" fill="rgba(196,98,45,0.08)"/>
+          <!-- Left temple arm -->
+          <path d="M30 124 Q12 124 8 140 L6 190" stroke="#3D2B1F" stroke-width="4" stroke-linecap="round"/>
+          <!-- Right temple arm -->
+          <path d="M350 124 Q368 124 372 140 L374 190" stroke="#3D2B1F" stroke-width="4" stroke-linecap="round"/>
+
+          <!-- Caption HUD on left lens -->
+          <rect x="44" y="110" width="90" height="14" rx="4" fill="rgba(196,98,45,0.2)"/>
+          <rect x="44" y="128" width="72" height="12" rx="3" fill="rgba(196,98,45,0.12)"/>
+          <rect x="44" y="144" width="82" height="12" rx="3" fill="rgba(196,98,45,0.12)"/>
+
+          <!-- Sentiment indicator on right lens -->
+          <circle cx="291" cy="134" r="22" fill="rgba(125,184,138,0.15)" stroke="rgba(125,184,138,0.5)" stroke-width="1.5"/>
+          <!-- Smile arc -->
+          <path d="M281 136 Q291 144 301 136" stroke="#7DB88A" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <!-- Eyes -->
+          <circle cx="285" cy="130" r="2.5" fill="#7DB88A"/>
+          <circle cx="297" cy="130" r="2.5" fill="#7DB88A"/>
+
+          <!-- Microphone / speaker icon on right lens -->
+          <rect x="316" y="108" width="22" height="16" rx="5" fill="rgba(196,98,45,0.25)" stroke="#C4622D" stroke-width="1.5"/>
+          <!-- Waveform lines -->
+          <line x1="320" y1="112" x2="320" y2="120" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="324" y1="109" x2="324" y2="123" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="328" y1="112" x2="328" y2="120" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="332" y1="114" x2="332" y2="118" stroke="#C4622D" stroke-width="1.5" stroke-linecap="round"/>
+
+          <!-- Subtle glow circles behind lenses -->
+          <ellipse cx="89" cy="134" rx="45" ry="32" fill="rgba(196,98,45,0.04)"/>
+          <ellipse cx="291" cy="134" rx="45" ry="32" fill="rgba(125,184,138,0.05)"/>
+        </svg>
+      </div>
+
+      <!-- Floating caption card -->
+      <div class="caption-card">
+        <div class="caption-label">Live Caption</div>
+        <div class="caption-text">"I am so proud of everything you have built."</div>
+        <div class="sentiment-row">
+          <div class="sentiment-dot"></div>
+          <div class="sentiment-label">Joy — 78%</div>
+          <div class="sentiment-bar-wrap"><div class="sentiment-bar"></div></div>
+        </div>
+      </div>
+
+      <!-- Latency badge -->
+      <div class="latency-badge">
+        <span class="latency-num">&lt;80</span>
+        <span class="latency-unit">ms latency</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INVESTOR STRIP -->
+<div class="investor-strip reveal">
+  <div class="investor-strip-label">Recognized by</div>
+  <div class="investor-items">
+    <div class="investor-item">UW Health Innovation Challenge</div>
+    <div class="investor-item">$1,500 Seed Grant</div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="problem-inner">
+    <div class="section-tag reveal">The Human Cost of Silence</div>
+    <div class="problem-pullquote reveal reveal-delay-1">
+      Imagine missing your child's first words — not because you weren't there, <em>but because the world wasn't built for you.</em>
+    </div>
+    <p class="problem-body reveal reveal-delay-2">
+      Over 466 million people worldwide experience disabling hearing loss. Existing solutions — bulky hearing aids, phone-based apps, expensive cochlear implants — force a choice between presence and participation. Vaakya was built to end that choice.
+    </p>
+    <div class="stats-row reveal reveal-delay-3">
+      <div class="stat-cell">
+        <div class="stat-num">466M</div>
+        <div class="stat-desc">people live with disabling hearing loss globally</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">$65B</div>
+        <div class="stat-desc">global hearing health market by 2028</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">78%</div>
+        <div class="stat-desc">of users report social isolation from their condition</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="features-inner">
+    <div class="features-header">
+      <div>
+        <div class="features-eyebrow reveal">The Technology</div>
+        <h2 class="features-title reveal reveal-delay-1">Three layers.<br><em>One seamless experience.</em></h2>
+      </div>
+      <p class="features-desc reveal reveal-delay-2">
+        Vaakya is built from the ground up as a wearable system — not a retrofitted app. Every feature was designed to vanish into your natural field of vision, putting you back in the conversation.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Feature 1: Real-time captions -->
+      <div class="feature-card reveal">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="14" rx="3"/>
+            <path d="M6 10h4M6 14h8"/>
+          </svg>
+        </div>
+        <div class="feature-name">Real-Time Captions</div>
+        <div class="feature-desc">Spoken words appear as overlaid text in your visual field within milliseconds. Powered by on-device Vosk ASR — no cloud dependency, full privacy.</div>
+        <div class="feature-metric">
+          <span class="feature-metric-num">&lt;80</span>
+          <span class="feature-metric-label">ms end-to-end latency</span>
+        </div>
+      </div>
+
+      <!-- Feature 2: Sentiment analysis -->
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M8 13s1.5 2 4 2 4-2 4-2"/>
+            <line x1="9" y1="9" x2="9.01" y2="9"/>
+            <line x1="15" y1="9" x2="15.01" y2="9"/>
+          </svg>
+        </div>
+        <div class="feature-name">Emotional Sentiment</div>
+        <div class="feature-desc">Words carry tone. Vaakya layers real-time sentiment signals — joy, concern, urgency — so you catch the subtext, not just the text.</div>
+        <div class="feature-metric">
+          <span class="feature-metric-num">6</span>
+          <span class="feature-metric-label">emotional dimensions tracked</span>
+        </div>
+      </div>
+
+      <!-- Feature 3: Speech amplification -->
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+        </div>
+        <div class="feature-name">Speech Amplification</div>
+        <div class="feature-desc">Adaptive directional audio enhancement picks out the voice you're focused on — filtering background noise so the room comes to you, not the other way around.</div>
+        <div class="feature-metric">
+          <span class="feature-metric-num">3×</span>
+          <span class="feature-metric-label">signal-to-noise improvement</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACTION -->
+<section id="traction">
+  <div class="traction-inner">
+    <div class="traction-header">
+      <div class="section-tag reveal">Early Momentum</div>
+      <h2 class="traction-title reveal reveal-delay-1">We're not a pitch deck.<br>We're a working product.</h2>
+    </div>
+
+    <div class="traction-grid">
+      <div class="traction-card reveal">
+        <div class="traction-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+        <div class="traction-card-body">
+          <div class="traction-card-value">Live Prototype</div>
+          <div class="traction-card-label">Raspberry Pi-based hardware running Vosk ASR with sub-100ms caption latency — functional and field-tested.</div>
+        </div>
+      </div>
+
+      <div class="traction-card reveal reveal-delay-1">
+        <div class="traction-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div class="traction-card-body">
+          <div class="traction-card-value">$1,500 Grant</div>
+          <div class="traction-card-label">Seed-funded through a competitive health innovation grant. Capital deployed directly into hardware iteration.</div>
+        </div>
+      </div>
+
+      <div class="traction-card reveal reveal-delay-2">
+        <div class="traction-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="traction-card-body">
+          <div class="traction-card-value">UW Recognized</div>
+          <div class="traction-card-label">Entered and advanced in the University of Washington Health Innovation Challenge as Vaakya (also known as EchoSight).</div>
+        </div>
+      </div>
+
+      <div class="traction-card reveal reveal-delay-3">
+        <div class="traction-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+            <polyline points="17 6 23 6 23 12"/>
+          </svg>
+        </div>
+        <div class="traction-card-body">
+          <div class="traction-card-value">Venture-Ready</div>
+          <div class="traction-card-label">Vaakya is architected to scale. The core IP — real-time on-device ASR fused with emotional sentiment inference — is a defensible technical moat that no consumer app or legacy hearing-aid company currently offers. Our modular hardware stack (Raspberry Pi now, custom SoC next) allows rapid iteration without full redesigns. The $65B global hearing health market is growing 7% annually, underserved by innovation, and ripe for a wearable-first entrant. We are raising a pre-seed round to fund miniaturization, clinical validation, and a 50-user beta — positioned for a Series A within 18 months.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST / CTA -->
+<section id="waitlist">
+  <div class="waitlist-inner">
+    <div class="waitlist-eyebrow reveal">Be Part of What's Next</div>
+    <h2 class="waitlist-title reveal reveal-delay-1">The room is talking.<br><em>Be the first to see it.</em></h2>
+    <p class="waitlist-desc reveal reveal-delay-2">
+      Join our waitlist for early access to Vaakya — and if you're an investor, founder, or accessibility advocate who wants to talk, we'd love to hear from you.
+    </p>
+    <div class="reveal reveal-delay-3">
+      <div class="waitlist-form" id="wl-form">
+        <input type="email" class="waitlist-input" placeholder="your@email.com" id="wl-email" />
+        <button class="waitlist-submit" id="wl-submit">Request access</button>
+      </div>
+      <div class="success-msg" id="wl-success">
+        You're on the list. We'll be in touch soon.
+      </div>
+      <p class="waitlist-note">No spam. No noise. Just Vaakya updates.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Vaak<span>ya</span></div>
+    <div class="footer-tagline">Hear the room. Feel every word.</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#problem">The Need</a></li>
+    <li><a href="#features">Technology</a></li>
+    <li><a href="#traction">Traction</a></li>
+    <li><a href="mailto:hello@vaakya.io">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  // Nav scroll behavior
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => revealObs.observe(el));
+
+  // Waitlist form
+  document.getElementById('wl-submit').addEventListener('click', () => {
+    const email = document.getElementById('wl-email').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('wl-email').style.outline = '2px solid #C4622D';
+      setTimeout(() => document.getElementById('wl-email').style.outline = '', 1200);
+      return;
+    }
+    document.getElementById('wl-form').style.display = 'none';
+    document.getElementById('wl-success').style.display = 'block';
+  });
+
+  // Smooth anchor scroll with offset for fixed nav
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href');
+      if (id === '#') return;
+      const el = document.querySelector(id);
+      if (el) {
+        e.preventDefault();
+        window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
