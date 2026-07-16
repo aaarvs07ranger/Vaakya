@@ -2,6 +2,7 @@
 **Python, Vosk STT, Raspberry Pi, Pygame**
 
 ---
+Thank you to the Buerk Center for Entrepreneurship (University of Washington) - for the $2,000 grant. This wouldn't have been possible withouth them. 
 
 Vaakya (Sanskrit: Speech) is a real time AR captioning system built for the 28.8 million working-age adults with hearing los in the US. This specific glasses was targeted for high stakes environments like clinical intake meetings, classrooms and legal proceedings. Existing solutions are too pricey or fail on latency or are not privacy compliant.
 
